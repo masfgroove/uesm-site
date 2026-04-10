@@ -1,0 +1,186 @@
+ {
+  "Header": {
+    "title": "U E S M",
+    "paragraph": "União das Escolas de Samba de Maquete."
+  },
+    "About": {
+    "paragraph": "A UESM é a liga oficial das Escolas de Samba de Maquete. Nosso site é o ponto de encontro para quem ama o Carnaval em miniatura, onde mostramos desfiles incríveis, oferecemos produtos exclusivos para suas criações e trazemos todas as notícias atualizadas do mundo do carnaval.",
+    "Why": [
+      "Desfiles em maquete2",
+      "Produtos exclusivos",
+      "Notícias do Carnaval",
+      "Comunidade UESM"
+    ],
+    "Why2": [
+      "Arte em miniatura",
+      "Tutoriais técnicos",
+      "Eventos da liga",
+      "Paixão pelo samba"
+    ]
+ },
+	 "Contact": {
+    "address": "4321 California St, San Francisco, CA 12345 ",
+    "phone": "+1 123 456 1234",
+    "email": "info@company.com",
+    "facebook": "fb.com",
+    "twitter": "twitter.com",
+    "youtube": "youtube.com"
+  },
+
+  "Features": [
+  {
+    "icon": "faTrophy",
+    "title": "Desfile da Semana",
+    "text": "Toda semana um novo desfile de maquete de carnaval, com criatividade, detalhes e paixão pelo samba."
+  },
+  {
+    "icon": "faShoppingCart",
+    "title": "Produtos e Ofertas",
+    "text": "Encontre materiais, kits e acessórios para montar sua própria maquete de carnaval."
+  },
+  {
+    "icon": "faVideo",
+    "title": "Vídeos e Tutoriais",
+    "text": "Aprenda técnicas, veja bastidores e acompanhe conteúdos exclusivos sobre maquetes."
+  },
+  {
+    "icon": "faNewspaper",
+    "title": "Notícias do Carnaval",
+    "text": "Fique por dentro das novidades, curiosidades e tudo que acontece no mundo do carnaval."
+  }
+],
+
+  "Gallery": [
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/01-large.png",
+      "smallImage": "img/portfolio/01-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/02-large.png",
+      "smallImage": "img/portfolio/02-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/03-large.png",
+      "smallImage": "img/portfolio/03-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/04-large.png",
+      "smallImage": "img/portfolio/04-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/05-large.png",
+      "smallImage": "img/portfolio/05-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/06-large.png",
+      "smallImage": "img/portfolio/06-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/07-large.png",
+      "smallImage": "img/portfolio/07-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/08-large.png",
+      "smallImage": "img/portfolio/08-small.png"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/09-large.png",
+      "smallImage": "img/portfolio/09-small.png"
+    }
+  ],
+  "Testimonials": [
+    {
+      "img": "img/testimonials/01.jpg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "John Doe"
+    },
+    {
+      "img": "img/testimonials/02.jpg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "Johnathan Doe"
+    },
+    {
+      "img": "img/testimonials/03.jpg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "John Doe"
+    },
+    {
+      "img": "img/testimonials/04.jpg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "Johnathan Doe"
+    },
+    {
+      "img": "img/testimonials/05.jpg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "John Doe"
+    },
+    {
+      "img": "img/testimonials/06.jpg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "Johnathan Doe"
+    }
+  ],
+  "Team": [
+    {
+      "img": "img/team/01.jpg",
+      "name": "John Doe",
+      "job": "Director"
+    },
+    {
+      "img": "img/team/02.jpg",
+      "name": "Mike Doe",
+      "job": "Senior Designer"
+    },
+    {
+      "img": "img/team/03.jpg",
+      "name": "Jane Doe",
+      "job": "Senior Designer"
+    },
+    {
+      "img": "img/team/04.jpg",
+      "name": "Karen Doe",
+      "job": "Project Manager"
+    }
+  ],
+  "Services": [
+  {
+    "icon": "faVideo",
+    "name": "Desfiles Oficiais",
+    "text": "Assista às transmissões ao vivo dos desfiles de maquete com narração, comentários e toda a emoção do Sambódromo em miniatura."
+  },
+  {
+    "icon": "faPaintBrush",
+    "name": "Tutoriais Técnicos",
+    "text": "Aprenda dicas e truques de modelagem, iluminação e uso de materiais reciclados para elevar o nível das suas alegorias e fantasias."
+  },
+  {
+    "icon": "faNewspaper",
+    "name": "Notícias e Cobertura",
+    "text": "Fique por dentro de tudo o que acontece nos bastidores das escolas, sorteios de ordem de desfile e novidades do mundo do carnaval."
+  },
+  {
+    "icon": "faTrophy",
+    "name": "Avaliação e Notas",
+    "text": "Conheça o corpo de jurados e entenda os critérios técnicos que definem as grandes campeãs do Carnaval de Maquete da UESM."
+  },
+  {
+    "icon": "faMusic",
+    "name": "Sambas-Enredo",
+    "text": "Ouça e baixe as obras musicais que embalam os desfiles, valorizando a composição e os talentos das agremiações parceiras."
+  },
+  {
+    "icon": "faUsers",
+    "name": "Comunidade e Interação",
+    "text": "Participe de votações populares, fóruns de discussão e conecte-se com outros apaixonados pela arte da miniatura e do samba."
+  }
+]
+}
