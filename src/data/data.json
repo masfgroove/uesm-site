@@ -151,6 +151,13 @@
       "job": "Project Manager"
     }
   ],
+  "Mercado": [
+  {
+    "title": "Miniatura Estandarte",
+    "largeImage": "img/mercado/01-large.jpg",
+    "smallImage": "img/mercado/01-small.jpg"
+  }
+  ],
   "Services": [
   {
     "icon": "faVideo",

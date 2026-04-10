@@ -8,6 +8,7 @@ import { About } from './Components/About';
 import { Contact } from './Components/Contact';
 import { Features } from './Components/Features';
 import { Gallery } from './Components/Gallery';
+import { Mercado } from './Components/Mercados';
 import { Services } from './Components/Services';
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
       <Services />
       <About />
       <Gallery />
+      <Mercado />
       <Contact />
     </div>
   );
