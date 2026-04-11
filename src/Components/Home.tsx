@@ -20,7 +20,7 @@ export function Home()
                     href='#features'
                     className='btn btn-custom btn-lg page-scroll'
                   >
-                    Learn More
+                    UESM - curta nosso site!!!
                   </a>{' '}
                 </Col>
               </Row>

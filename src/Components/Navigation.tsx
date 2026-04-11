@@ -9,10 +9,9 @@ export function Navigation() {
         setPageData(JsonData);
     }, []);
 
-    // Estilo para os nomes aparecerem (Cor escura para fundo claro)
     const linkStyle = { 
         fontWeight: 'bold', 
-        color: '#333333', // Cinza escuro para ficar visível
+        color: '#333333', 
         textTransform: 'uppercase' as 'uppercase',
         fontSize: '13px',
         marginRight: '10px'
@@ -36,6 +35,12 @@ export function Navigation() {
                             <Nav.Item>
                                 <Nav.Link href="#home" className="nav-links" style={linkStyle}>🏠 Home</Nav.Link>
                             </Nav.Item>
+                            
+                            {/* ADICIONADO: LINK PARA NOTÍCIAS */}
+                            <Nav.Item>
+                                <Nav.Link href="#noticias" className="nav-links" style={{...linkStyle, color: '#d35400'}}>📰 Notícias</Nav.Link>
+                            </Nav.Item>
+
                             <Nav.Item>
                                 <Nav.Link href="#features" className="nav-links" style={linkStyle}>✨ Explore</Nav.Link>
                             </Nav.Item>
@@ -49,7 +54,6 @@ export function Navigation() {
                                 <Nav.Link href='#portfolio' className="nav-links" style={linkStyle}>🖼️ Galeria</Nav.Link>
                             </Nav.Item>
 
-                            {/* MERCADO EM AMARELO CONTINUA AQUI */}
                             <Nav.Item>
                                 <Nav.Link href='#mercado' className="nav-links" style={{ fontWeight: 'bold', color: '#f39c12', textTransform: 'uppercase', fontSize: '13px' }}>
                                     Mercado 🛒
