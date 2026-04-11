@@ -165,12 +165,13 @@ export function Contact()
       <div id='footer'>
           <div className='container text-center'>
             <p>
-              &copy; 2022 Sebastião Lucio React Land Page Template. Design by{' '}
-              <a href='https://github.com/rio3dstudios' rel='nofollow'>
-                Rio 3D Studios
+              &copy; 2026 UESM - União das Escolas de Samba de Maquete. 
+              Desenvolvido por{' '}
+              <a href='https://github.com/marcoantonio' rel='nofollow'>
+                Marco Antonio da Silva Ferreira
               </a>
             </p>
-          </div>
+        </div>
         </div>
       </div>
     )
