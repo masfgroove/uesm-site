@@ -150,12 +150,6 @@ export function Contact()
                       </a>
                     </li>
                     <li>
-                      <a href={JsonData  ?JsonData.Contact.twitter : '/'}>
-                     
-                        <FontAwesomeIcon icon={faTwitter} style={{ color: 'white',fontSize:'42px' }} />
-                      </a>
-                    </li>
-                    <li>
                       <a href={JsonData  ? JsonData.Contact.youtube : '/'}>
                       <FontAwesomeIcon icon={faYoutube} style={{ color: 'white',fontSize:'42px'}} />
                       </a>

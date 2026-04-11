@@ -1,72 +1,62 @@
-
-import{Navbar,Nav,Container} from 'react-bootstrap';
-
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import JsonData from "../data/data.json";
 import { useState, useEffect } from "react";
 
+export function Navigation() {
+    const [pageData, setPageData] = useState({});
 
-
-export function Navigation()
-{
-    const [pageData, setPageData] = useState({});//pageData== vetor, setPageData == funcão para carregar o vetor
     useEffect(() => {
-      setPageData(JsonData);
+        setPageData(JsonData);
     }, []);
 
-    return(
+    // Estilo para os nomes aparecerem (Cor escura para fundo claro)
+    const linkStyle = { 
+        fontWeight: 'bold', 
+        color: '#333333', // Cinza escuro para ficar visível
+        textTransform: 'uppercase' as 'uppercase',
+        fontSize: '13px',
+        marginRight: '10px'
+    };
 
-        
-<div>
+    return (
+        <div>
+            <Navbar collapseOnSelect fixed='top' expand='sm' className='navbar-default'>
+                <Container>
+                    <Navbar.Brand style={{ fontWeight: '900', color: '#333' }}>U E S M</Navbar.Brand>
+                    <Navbar.Toggle className='navbar-toggle' aria-controls='responsive-navbar-nav' />
 
-<div>
-   <>
-  
+                    <Navbar.Collapse id='responsive-navbar-nav' className="justify-content-end">
+                        <Nav defaultActiveKey="/" as="ul">
+                            <Nav.Item>
+                                <Nav.Link href="#home" className="nav-links" style={linkStyle}>🏠 Home</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link href="#features" className="nav-links" style={linkStyle}>✨ Explore</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link href="#services" className="nav-links" style={linkStyle}>🛠️ Serviços</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link href='#about' className="nav-links" style={linkStyle}>📖 Sobre</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link href='#portfolio' className="nav-links" style={linkStyle}>🖼️ Galeria</Nav.Link>
+                            </Nav.Item>
 
-  <Navbar  collapseOnSelect fixed = 'top' expand='sm' className='navbar-default '>
-    <Container>
-        <Navbar.Brand >U E S M</Navbar.Brand>
-        <Navbar.Toggle className='navbar-toggle' aria-controls ='responsive-navbar-nav' />
+                            {/* MERCADO EM AMARELO CONTINUA AQUI */}
+                            <Nav.Item>
+                                <Nav.Link href='#mercado' className="nav-links" style={{ fontWeight: 'bold', color: '#f39c12', textTransform: 'uppercase', fontSize: '13px' }}>
+                                    Mercado 🛒
+                                </Nav.Link>
+                            </Nav.Item>
 
-        <Navbar.Collapse id = 'responsive-navbar-nav'   className="justify-content-end" >
-         <Nav defaultActiveKey="/" as="ul">
-         <Nav.Item>
-           <Nav.Link href="#home" className="nav-links" >Home</Nav.Link>
-         </Nav.Item>
-         <Nav.Item>
-           <Nav.Link href="#features"  className="nav-links" >Explore</Nav.Link>
-         </Nav.Item>
-         <Nav.Item>
-           <Nav.Link href="#services" className="nav-links" >Serviços</Nav.Link>
-         </Nav.Item>
-         <Nav.Item>
-           <Nav.Link href='#about'  className="nav-links" >Sobre</Nav.Link>
-         </Nav.Item>
-         <Nav.Item>
-           <Nav.Link href='#portfolio'  className="nav-links" >Galeria</Nav.Link>
-         </Nav.Item>
-       
-       {/*<Nav.Item>
-           <Nav.Link href='#team'  className="nav-links" >Team</Nav.Link>
-         </Nav.Item>
-         */}
-         <Nav.Item>
-           <Nav.Link href="#contact"  className="nav-links" >Contact</Nav.Link>
-         </Nav.Item>
-        
-       
-         </Nav>
-        </Navbar.Collapse>
-    
-  
-    </Container>
-  </Navbar>
- 
-</>
-</div>
-
-
-</div>
-
-
-  )
+                            <Nav.Item>
+                                <Nav.Link href="#contact" className="nav-links" style={linkStyle}>📞 Contato</Nav.Link>
+                            </Nav.Item>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+        </div>
+    );
 }
