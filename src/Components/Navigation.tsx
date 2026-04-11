@@ -22,7 +22,13 @@ export function Navigation() {
         <div>
             <Navbar collapseOnSelect fixed='top' expand='sm' className='navbar-default'>
                 <Container>
-                    <Navbar.Brand style={{ fontWeight: '900', color: '#333' }}>U E S M</Navbar.Brand>
+                    <Navbar.Brand style={{ display: 'flex', alignItems: 'center' }}>
+                      <img
+                        src="img/logo_uesm.png"
+                        alt="Logo UESM"
+                        style={{ height: '45px', width: 'auto' }}
+                      />
+                    </Navbar.Brand>
                     <Navbar.Toggle className='navbar-toggle' aria-controls='responsive-navbar-nav' />
 
                     <Navbar.Collapse id='responsive-navbar-nav' className="justify-content-end">
