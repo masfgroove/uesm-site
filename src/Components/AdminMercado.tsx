@@ -40,7 +40,8 @@ export function AdminMercado() {
         setLinkAfiliado(p.linkAfiliado);
         setCategoria(p.categoria);
         setGarantia(p.garantia);
-        window.scrollTo(0, 0); // Sobe a página para o formulário
+        // Rola a página suavemente até a seção do formulário
+        document.getElementById('AdminMercado')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     const limparFormulario = () => {
