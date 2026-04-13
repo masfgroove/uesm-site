@@ -13,10 +13,11 @@ import { Gallery } from './Components/Gallery';
 import { Mercado } from './Components/Mercados';
 import { Services } from './Components/Services';
 import { Noticias } from './Components/Noticias'; 
+import { AdminMercado } from "./Components/AdminMercado";
 
 function App() {
   const [eventos, setEventos] = useState<any[]>([]);
-  const [totalAcessos, setTotalAcessos] = useState<number>(0); // Estado para o contador
+  const [totalAcessos, setTotalAcessos] = useState<number>(0);
 
   useEffect(() => {
     // 1. BUSCA EVENTOS DAS ESCOLAS
@@ -41,7 +42,6 @@ function App() {
         const resIp = await fetch("https://api.ipify.org?format=json");
         const dataIp = await resIp.json();
         const userIP = dataIp.ip;
-
         const dataLocal = new Date().toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" });
 
         await fetch('https://render-backend-sl5b.onrender.com/acessos', {
@@ -53,8 +53,6 @@ function App() {
             navegador: navigator.userAgent 
           })
         });
-        
-        console.log("Seu acesso foi registrado!");
       } catch (err) {
         console.error("Erro ao registrar acesso:", err);
       }
@@ -96,10 +94,12 @@ function App() {
       <Services />
       <About />
       <Gallery />
-      <Mercado />
-      {/* ADICIONE A PROP ACESSOS AQUI EMBAIXO */}
-      <Contact acessos={totalAcessos} />
+
+      {/* O FORMULÁRIO APARECE AQUI - ATIVADO */}
+      <AdminMercado />
       
+      <Mercado />
+      <Contact acessos={totalAcessos} />
     </div>
   );
 }
