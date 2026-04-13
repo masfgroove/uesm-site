@@ -27,6 +27,26 @@ export function AdminMercado() {
         carregarProdutos();
     }, []);
 
+    // FUNÇÃO PARA EXCLUIR PRODUTO
+    const excluirProduto = async (id: string) => {
+        if (window.confirm("Tem certeza que deseja remover este item da UESM?")) {
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: "DELETE",
+                });
+
+                if (response.ok) {
+                    setStatus({ tipo: "success", mensagem: "Produto excluído com sucesso! 🗑️" });
+                    carregarProdutos(); // Atualiza a lista na hora
+                } else {
+                    setStatus({ tipo: "danger", mensagem: "Erro ao excluir produto." });
+                }
+            } catch (error) {
+                setStatus({ tipo: "danger", mensagem: "Erro na conexão com o banco." });
+            }
+        }
+    };
+
     const prepararEdicao = (p: any) => {
         setIdEditando(p._id);
         setTitulo(p.titulo);
@@ -37,7 +57,7 @@ export function AdminMercado() {
         setCategoria(p.categoria);
         setGarantia(p.garantia);
         
-        // Se você NÃO quer que a página suba sozinha, comente a linha abaixo:
+        // Se desejar que role a página ao editar, descomente a linha abaixo:
         // document.getElementById('AdminMercado')?.scrollIntoView({ behavior: 'smooth' });
     };
 
@@ -143,8 +163,21 @@ export function AdminMercado() {
                                 <td className="small">{p.titulo}</td>
                                 <td><span className="badge bg-primary">{p.categoria}</span></td>
                                 <td>
-                                    <Button variant="warning" size="sm" onClick={() => prepararEdicao(p)}>
-                                        Editar
+                                    <Button 
+                                        variant="outline-primary" 
+                                        size="sm" 
+                                        onClick={() => prepararEdicao(p)}
+                                    >
+                                        Editar 🔄
+                                    </Button>
+                                    
+                                    <Button 
+                                        variant="outline-danger" 
+                                        size="sm" 
+                                        className="ms-2" 
+                                        onClick={() => excluirProduto(p._id)}
+                                    >
+                                        Excluir 🗑️
                                     </Button>
                                 </td>
                             </tr>

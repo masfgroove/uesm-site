@@ -1,8 +1,8 @@
 import './App.css';
 import { Navigation } from './Components/Navigation';
-import { default as JsonData } from "./data/data.json";
 import { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Componentes da Home
 import { Home } from './Components/Home';
@@ -20,87 +20,91 @@ function App() {
   const [totalAcessos, setTotalAcessos] = useState<number>(0);
 
   useEffect(() => {
-    // 1. BUSCA EVENTOS DAS ESCOLAS
+    // 1. BUSCA EVENTOS
     fetch('https://render-backend-sl5b.onrender.com/eventos') 
       .then(res => res.json())
       .then(dados => setEventos(dados))
-      .catch(err => console.error("Erro na API do Render (Eventos):", err));
+      .catch(err => console.error("Erro na API (Eventos):", err));
 
-    // 2. BUSCA QUANTIDADE DE ACESSOS NO BANCO
+    // 2. BUSCA ACESSOS
     fetch('https://render-backend-sl5b.onrender.com/ver-acessos')
       .then(res => res.json())
       .then(dados => {
-        if (Array.isArray(dados)) {
-          setTotalAcessos(dados.length);
-        }
-      })
-      .catch(err => console.error("Erro ao buscar contagem de acessos:", err));
+        if (Array.isArray(dados)) setTotalAcessos(dados.length);
+      });
 
-    // 3. CAPTURA IP E REGISTRA O NOVO ACESSO
+    // 3. REGISTRA ACESSO
     const registrarAcesso = async () => {
       try {
         const resIp = await fetch("https://api.ipify.org?format=json");
         const dataIp = await resIp.json();
-        const userIP = dataIp.ip;
-        const dataLocal = new Date().toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" });
-
         await fetch('https://render-backend-sl5b.onrender.com/acessos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            ip: userIP, 
-            data: dataLocal,
+            ip: dataIp.ip, 
+            data: new Date().toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" }),
             navegador: navigator.userAgent 
           })
         });
-      } catch (err) {
-        console.error("Erro ao registrar acesso:", err);
-      }
+      } catch (err) { console.error(err); }
     };
-
     registrarAcesso();
   }, []);
 
   return (
-    <div>
+    <Router>
       <Navigation />
-      <Home />
-
-      {/* --- CONTADOR DE VISITAS --- */}
-      <div className="container mt-4 text-center">
-        <div className="p-2 d-inline-block shadow-sm rounded bg-light border">
-          <span className="text-dark fw-bold">
-            🌎 Total de visitas no portal: <span className="text-danger">{totalAcessos}</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Seção Escolas de Samba */}
-      <div className="container mt-5 mb-5 text-center">
-        <h2 className="mb-4">🥁 Escolas de Samba de Maquete (UESM)</h2>
-        <div className="row justify-content-center">
-          {eventos.map((ev) => (
-            <div key={ev._id} className="col-md-5 card m-2 p-4 shadow border-warning">
-              <h3 className="text-danger">{ev.escola}</h3>
-              <h5 className="text-dark">{ev.nome}</h5>
-              <p className="badge bg-primary">Ano: {ev.ano}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <Noticias />
-      <Features />
-      <Services />
-      <About />
-      <Gallery />
-
-      {/* O FORMULÁRIO APARECE AQUI - ATIVADO */}
-      <AdminMercado />
       
-      <Mercado />
-      <Contact acessos={totalAcessos} />
-    </div>
+      <Routes>
+        {/* ROTA PÚBLICA: O que os usuários veem */}
+        <Route path="/" element={
+          <div>
+            <Home />
+            
+            <div className="container mt-4 text-center">
+              <div className="p-2 d-inline-block shadow-sm rounded bg-light border">
+                <span className="text-dark fw-bold">
+                  🌎 Total de visitas no portal: <span className="text-danger">{totalAcessos}</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="container mt-5 mb-5 text-center">
+              <h2 className="mb-4">🥁 Escolas de Samba de Maquete (UESM)</h2>
+              <div className="row justify-content-center">
+                {eventos.map((ev) => (
+                  <div key={ev._id} className="col-md-5 card m-2 p-4 shadow border-warning">
+                    <h3 className="text-danger">{ev.escola}</h3>
+                    <h5 className="text-dark">{ev.nome}</h5>
+                    <p className="badge bg-primary">Ano: {ev.ano}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Noticias />
+            <Features />
+            <Services />
+            <About />
+            <Gallery />
+            <Mercado />
+            <Contact acessos={totalAcessos} />
+          </div>
+        } />
+
+        {/* ROTA PRIVADA: Só você acessa digitando /painel-uesm */}
+        <Route path="/painel-uesm" element={
+          <div className="py-5 bg-dark min-vh-100">
+            <AdminMercado />
+            <div className="text-center mt-3">
+              <a href="/" className="text-white">← Voltar para o Site</a>
+            </div>
+          </div>
+        } />
+
+      </Routes>
+    </Router>
   );
 }
 
