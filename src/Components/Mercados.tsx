@@ -38,10 +38,7 @@ export function Mercado() {
                                         <Card.Title className="fs-6">{d.titulo}</Card.Title>
                                         <h4 className="text-success">R$ {d.preco}</h4>
                                         <p className="text-muted small">{d.parcelas}</p>
-                                        <Card.Text className="small flex-grow-1">
-                                            {d.descricao}
-                                        </Card.Text>
-                                        
+                                                                                
                                         {/* Botão que leva para o seu link de afiliado */}
                                         <Button 
                                             variant="warning" 
