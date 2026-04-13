@@ -24,7 +24,7 @@ export function AdminMercado() {
                 ? "http://localhost:3000" 
                 : "https://render-backend-sl5b.onrender.com";
 
-            const response = await fetch(`${baseUrl}/produtos`, {
+            const response = await fetch('https://render-backend-sl5b.onrender.com/produtos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form)
