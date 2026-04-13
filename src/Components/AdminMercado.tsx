@@ -6,7 +6,7 @@ export function AdminMercado() {
     const [form, setForm] = useState({
         titulo: "",
         preco: "",
-        parcelas: "12x sem juros", // Valor padrão inicial
+        parcelas: "12x sem juros",
         imagem: "",
         descricao: "",
         linkAfiliado: "",
@@ -16,29 +16,33 @@ export function AdminMercado() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setStatus({ type: 'info', msg: 'Enviando...' });
+        setStatus({ type: 'info', msg: 'Enviando para o banco de dados...' });
 
         try {
-            // ATENÇÃO: Usando localhost:3000 para testar no seu PC
-            const response = await fetch('http://localhost:3000/produtos', {
+            // URL INTELIGENTE: Se estiver no PC usa localhost, senão usa o Render
+            const baseUrl = window.location.hostname === "localhost" 
+                ? "http://localhost:3000" 
+                : "https://render-backend-sl5b.onrender.com";
+
+            const response = await fetch(`${baseUrl}/produtos`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form)
             });
 
             if (response.ok) {
-                setStatus({ type: 'success', msg: '✅ Produto cadastrado no MongoDB!' });
+                setStatus({ type: 'success', msg: '✅ Sucesso! O produto já está no MongoDB e no site oficial.' });
                 setForm({ 
                     titulo: "", preco: "", parcelas: "12x sem juros", 
                     imagem: "", descricao: "", linkAfiliado: "", 
                     categoria: "Acessórios", garantia: "Sem garantia" 
                 });
             } else {
-                setStatus({ type: 'danger', msg: '❌ Erro ao salvar: Verifique o console do VS Code.' });
+                setStatus({ type: 'danger', msg: '❌ Erro no servidor. Verifique os logs no Render.' });
             }
         } catch (err) {
             console.error(err);
-            setStatus({ type: 'danger', msg: '❌ Servidor offline! Ligue o backend (npm start).' });
+            setStatus({ type: 'danger', msg: '❌ Erro de conexão. O servidor está offline.' });
         }
     };
 
