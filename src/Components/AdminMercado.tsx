@@ -1,110 +1,166 @@
-import React, { useState } from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Container, Form, Button, Alert, Table, Card } from "react-bootstrap";
 
 export function AdminMercado() {
-    const [status, setStatus] = useState({ type: '', msg: '' });
-    const [form, setForm] = useState({
-        titulo: "",
-        preco: "",
-        parcelas: "12x sem juros",
-        imagem: "",
-        descricao: "",
-        linkAfiliado: "",
-        categoria: "Acessórios",
-        garantia: "Sem garantia"
-    });
+    // Estados do formulário
+    const [idEditando, setIdEditando] = useState<string | null>(null);
+    const [titulo, setTitulo] = useState("");
+    const [preco, setPreco] = useState("");
+    const [parcelas, setParcelas] = useState("12x sem juros");
+    const [imagem, setImagem] = useState("");
+    const [linkAfiliado, setLinkAfiliado] = useState("");
+    const [categoria, setCategoria] = useState("Maquetes");
+    const [garantia, setGarantia] = useState("Sem garantia");
+    
+    const [status, setStatus] = useState({ tipo: "", mensagem: "" });
+    const [produtos, setProdutos] = useState<any[]>([]);
+
+    // URL da sua API no Render
+    const API_URL = "https://render-backend-sl5b.onrender.com/produtos";
+
+    // Busca os produtos para listar no painel
+    const carregarProdutos = () => {
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(dados => setProdutos(dados))
+            .catch(err => console.error("Erro ao carregar lista:", err));
+    };
+
+    useEffect(() => {
+        carregarProdutos();
+    }, []);
+
+    // Preenche o formulário para editar
+    const prepararEdicao = (p: any) => {
+        setIdEditando(p._id);
+        setTitulo(p.titulo);
+        setPreco(p.preco);
+        setParcelas(p.parcelas);
+        setImagem(p.imagem);
+        setLinkAfiliado(p.linkAfiliado);
+        setCategoria(p.categoria);
+        setGarantia(p.garantia);
+        window.scrollTo(0, 0); // Sobe a página para o formulário
+    };
+
+    const limparFormulario = () => {
+        setIdEditando(null);
+        setTitulo("");
+        setPreco("");
+        setImagem("");
+        setLinkAfiliado("");
+        setCategoria("Maquetes");
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setStatus({ type: 'info', msg: 'Enviando para o banco de dados...' });
+        
+        const produtoDados = { titulo, preco, parcelas, imagem, linkAfiliado, categoria, garantia };
+        
+        // Se tem ID, usa PUT (Alterar), se não, usa POST (Cadastrar)
+        const metodo = idEditando ? "PUT" : "POST";
+        const url = idEditando ? `${API_URL}/${idEditando}` : API_URL;
 
         try {
-            // URL INTELIGENTE: Se estiver no PC usa localhost, senão usa o Render
-            const baseUrl = window.location.hostname === "localhost" 
-                ? "http://localhost:3000" 
-                : "https://render-backend-sl5b.onrender.com";
-
-            const response = await fetch('https://render-backend-sl5b.onrender.com/produtos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form)
+            const response = await fetch(url, {
+                method: metodo,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(produtoDados),
             });
 
             if (response.ok) {
-                setStatus({ type: 'success', msg: '✅ Sucesso! O produto já está no MongoDB e no site oficial.' });
-                setForm({ 
-                    titulo: "", preco: "", parcelas: "12x sem juros", 
-                    imagem: "", descricao: "", linkAfiliado: "", 
-                    categoria: "Acessórios", garantia: "Sem garantia" 
+                setStatus({ 
+                    tipo: "success", 
+                    mensagem: idEditando ? "Produto atualizado com sucesso!" : "Produto cadastrado com sucesso!" 
                 });
+                limparFormulario();
+                carregarProdutos();
             } else {
-                setStatus({ type: 'danger', msg: '❌ Erro no servidor. Verifique os logs no Render.' });
+                throw new Error();
             }
-        } catch (err) {
-            console.error(err);
-            setStatus({ type: 'danger', msg: '❌ Erro de conexão. O servidor está offline.' });
+        } catch (error) {
+            setStatus({ tipo: "danger", mensagem: "Erro ao processar requisição." });
         }
     };
 
     return (
-        <Container className="py-5" style={{ maxWidth: '600px' }}>
-            <h3 className="mb-4 text-center">Cadastrar Novo Produto</h3>
-            
-            {status.msg && <Alert variant={status.type}>{status.msg}</Alert>}
+        <Container className="py-5">
+            <Card className="shadow p-4 mb-5">
+                <h2 className="text-center mb-4">
+                    {idEditando ? "🔄 Alterar Produto" : "➕ Cadastrar Novo Produto"}
+                </h2>
+                
+                {status.mensagem && <Alert variant={status.tipo}>{status.mensagem}</Alert>}
 
-            <Form onSubmit={handleSubmit} className="bg-light p-4 border rounded shadow-sm">
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Título do Produto</Form.Label>
-                    <Form.Control required type="text" placeholder="Ex: Franjas De Seda Tassel" 
-                        value={form.titulo} onChange={e => setForm({...form, titulo: e.target.value})} />
-                </Form.Group>
-
-                <div className="row">
-                    <Form.Group className="col-md-6 mb-3">
-                        <Form.Label className="fw-bold">Preço (R$)</Form.Label>
-                        <Form.Control required type="text" placeholder="46,16" 
-                            value={form.preco} onChange={e => setForm({...form, preco: e.target.value})} />
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Título do Produto</Form.Label>
+                        <Form.Control value={titulo} onChange={e => setTitulo(e.target.value)} required />
                     </Form.Group>
 
-                    <Form.Group className="col-md-6 mb-3">
-                        <Form.Label className="fw-bold">Parcelas</Form.Label>
-                        <Form.Control type="text" placeholder="12x R$ 4,50" 
-                            value={form.parcelas} onChange={e => setForm({...form, parcelas: e.target.value})} />
+                    <div className="d-flex gap-3">
+                        <Form.Group className="mb-3 w-50">
+                            <Form.Label>Preço (R$)</Form.Label>
+                            <Form.Control value={preco} onChange={e => setPreco(e.target.value)} required />
+                        </Form.Group>
+                        <Form.Group className="mb-3 w-50">
+                            <Form.Label>Categoria</Form.Label>
+                            <Form.Select value={categoria} onChange={e => setCategoria(e.target.value)}>
+                                <option value="Maquetes">Maquetes</option>
+                                <option value="Missangas">Missangas</option>
+                                <option value="Ferramentas">Ferramentas</option>
+                            </Form.Select>
+                        </Form.Group>
+                    </div>
+
+                    <Form.Group className="mb-3">
+                        <Form.Label>URL da Imagem</Form.Label>
+                        <Form.Control value={imagem} onChange={e => setImagem(e.target.value)} required />
                     </Form.Group>
-                </div>
 
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">URL da Imagem</Form.Label>
-                    <Form.Control required type="text" placeholder="https://..." 
-                        value={form.imagem} onChange={e => setForm({...form, imagem: e.target.value})} />
-                </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Link de Afiliado (Mercado Livre)</Form.Label>
+                        <Form.Control value={linkAfiliado} onChange={e => setLinkAfiliado(e.target.value)} required />
+                    </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Link de Afiliado (Mercado Livre)</Form.Label>
-                    <Form.Control required type="text" placeholder="https://meli.la/..." 
-                        value={form.linkAfiliado} onChange={e => setForm({...form, linkAfiliado: e.target.value})} />
-                </Form.Group>
+                    <div className="d-flex gap-2">
+                        <Button variant={idEditando ? "primary" : "success"} type="submit" className="w-100 fw-bold">
+                            {idEditando ? "SALVAR ALTERAÇÕES" : "CADASTRAR NO BANCO"}
+                        </Button>
+                        {idEditando && (
+                            <Button variant="secondary" onClick={limparFormulario}>CANCELAR</Button>
+                        )}
+                    </div>
+                </Form>
+            </Card>
 
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Categoria</Form.Label>
-                    <Form.Select value={form.categoria} onChange={e => setForm({...form, categoria: e.target.value})}>
-                        <option value="Acessórios">Acessórios</option>
-                        <option value="Materiais">Materiais</option>
-                        <option value="Maquetes">Maquetes</option>
-                        <option value="Outros">Outros</option>
-                    </Form.Select>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Descrição</Form.Label>
-                    <Form.Control as="textarea" rows={3} placeholder="Detalhes do produto..."
-                        value={form.descricao} onChange={e => setForm({...form, descricao: e.target.value})} />
-                </Form.Group>
-
-                <Button variant="primary" type="submit" className="w-100 fw-bold py-2">
-                    CADASTRAR PRODUTO 🚀
-                </Button>
-            </Form>
+            <Card className="shadow p-4">
+                <h3 className="mb-4 text-center">Gerenciar Produtos</h3>
+                <Table striped bordered hover responsive>
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {produtos.map(p => (
+                            <tr key={p._id}>
+                                <td>{p.titulo}</td>
+                                <td><span className="badge bg-info text-dark">{p.categoria}</span></td>
+                                <td>R$ {p.preco}</td>
+                                <td>
+                                    <Button variant="outline-primary" size="sm" onClick={() => prepararEdicao(p)}>
+                                        Editar 🔄
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </Card>
         </Container>
     );
 }
