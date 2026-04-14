@@ -27,7 +27,6 @@ export function AdminMercado() {
         carregarProdutos();
     }, []);
 
-    // FUNÇÃO PARA EXCLUIR PRODUTO
     const excluirProduto = async (id: string) => {
         if (window.confirm("Tem certeza que deseja remover este item da UESM?")) {
             try {
@@ -56,6 +55,9 @@ export function AdminMercado() {
         setLinkAfiliado(p.linkAfiliado);
         setCategoria(p.categoria);
         setGarantia(p.garantia);
+        
+        // Rola para o topo para facilitar a edição
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const limparFormulario = () => {
@@ -116,7 +118,6 @@ export function AdminMercado() {
 
                         <Form.Group className="mb-3 w-50">
                             <Form.Label className="fw-bold">Categoria</Form.Label>
-                            {/* Datalist permite selecionar as existentes ou digitar uma nova livremente */}
                             <Form.Control 
                                 list="categorias-existentes"
                                 value={categoria} 
@@ -168,23 +169,24 @@ export function AdminMercado() {
                             <tr key={p._id}>
                                 <td className="small">{p.titulo}</td>
                                 <td><span className="badge bg-primary">{p.categoria}</span></td>
-                                <td>
-                                    <Button 
-                                        variant="outline-primary" 
-                                        size="sm" 
-                                        onClick={() => prepararEdicao(p)}
-                                    >
-                                        Editar 🔄
-                                    </Button>
-                                    
-                                    <Button 
-                                        variant="outline-danger" 
-                                        size="sm" 
-                                        className="ms-2" 
-                                        onClick={() => excluirProduto(p._id)}
-                                    >
-                                        Excluir 🗑️
-                                    </Button>
+                                <td style={{ minWidth: "180px" }}>
+                                    <div className="d-flex gap-2">
+                                        <Button 
+                                            variant="outline-primary" 
+                                            size="sm" 
+                                            onClick={() => prepararEdicao(p)}
+                                        >
+                                            Editar 🔄
+                                        </Button>
+                                        
+                                        <Button 
+                                            variant="outline-danger" 
+                                            size="sm" 
+                                            onClick={() => excluirProduto(p._id)}
+                                        >
+                                            Excluir 🗑️
+                                        </Button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
