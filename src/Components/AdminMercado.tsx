@@ -37,7 +37,7 @@ export function AdminMercado() {
 
                 if (response.ok) {
                     setStatus({ tipo: "success", mensagem: "Produto excluído com sucesso! 🗑️" });
-                    carregarProdutos(); // Atualiza a lista na hora
+                    carregarProdutos(); 
                 } else {
                     setStatus({ tipo: "danger", mensagem: "Erro ao excluir produto." });
                 }
@@ -56,9 +56,6 @@ export function AdminMercado() {
         setLinkAfiliado(p.linkAfiliado);
         setCategoria(p.categoria);
         setGarantia(p.garantia);
-        
-        // Se desejar que role a página ao editar, descomente a linha abaixo:
-        // document.getElementById('AdminMercado')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     const limparFormulario = () => {
@@ -111,17 +108,26 @@ export function AdminMercado() {
                         <Form.Control value={titulo} onChange={e => setTitulo(e.target.value)} required placeholder="Ex: Franjas de Seda..." />
                     </Form.Group>
 
-                    <div className="d-flex gap-3">
+                    <div className="d-flex gap-3 align-items-end">
                         <Form.Group className="mb-3 w-50">
                             <Form.Label className="fw-bold">Preço (R$)</Form.Label>
                             <Form.Control value={preco} onChange={e => setPreco(e.target.value)} required />
                         </Form.Group>
+
                         <Form.Group className="mb-3 w-50">
                             <Form.Label className="fw-bold">Categoria</Form.Label>
-                            <Form.Select value={categoria} onChange={e => setCategoria(e.target.value)}>
-                                <option value="Maquetes">Maquetes</option>
-                                <option value="Missangas">Missangas</option>
-                            </Form.Select>
+                            {/* Datalist permite selecionar as existentes ou digitar uma nova livremente */}
+                            <Form.Control 
+                                list="categorias-existentes"
+                                value={categoria} 
+                                onChange={e => setCategoria(e.target.value)} 
+                                placeholder="Selecione ou digite nova"
+                                required
+                            />
+                            <datalist id="categorias-existentes">
+                                <option value="Maquetes" />
+                                <option value="Missangas" />
+                            </datalist>
                         </Form.Group>
                     </div>
 
