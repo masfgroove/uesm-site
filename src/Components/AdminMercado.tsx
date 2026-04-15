@@ -1,104 +1,50 @@
 import React, { useState, useEffect } from "react";
-import { Container, Form, Button, Alert, Table, Card } from "react-bootstrap";
+import { Container, Form, Button, Alert, Table, Card, Tabs, Tab } from "react-bootstrap";
 
 export function AdminMercado() {
+    // --- ESTADOS PRODUTOS ---
     const [idEditando, setIdEditando] = useState<string | null>(null);
     const [titulo, setTitulo] = useState("");
     const [preco, setPreco] = useState("");
-    const [parcelas, setParcelas] = useState("12x sem juros");
     const [imagem, setImagem] = useState("");
     const [linkAfiliado, setLinkAfiliado] = useState("");
     const [categoria, setCategoria] = useState("Maquetes");
-    const [garantia, setGarantia] = useState("Sem garantia");
-    
-    const [status, setStatus] = useState({ tipo: "", mensagem: "" });
     const [produtos, setProdutos] = useState<any[]>([]);
 
-    const API_URL = "https://render-backend-sl5b.onrender.com/produtos";
+    // --- ESTADOS NOTÍCIAS UESM ---
+    const [idNoticiaEditando, setIdNoticiaEditando] = useState<string | null>(null);
+    const [noticiaTitulo, setNoticiaTitulo] = useState("");
+    const [noticiaSub, setNoticiaSub] = useState("");
+    const [noticiaImg, setNoticiaImg] = useState("");
+    const [noticiaConteudo, setNoticiaConteudo] = useState("");
+    const [noticiasUesm, setNoticiasUesm] = useState<any[]>([]);
 
-    const carregarProdutos = () => {
-        fetch(API_URL)
-            .then(res => res.json())
-            .then(dados => setProdutos(dados))
-            .catch(err => console.error("Erro ao carregar lista:", err));
-    };
+    const [status, setStatus] = useState({ tipo: "", mensagem: "" });
 
-    useEffect(() => {
-        carregarProdutos();
-    }, []);
+    const API_PRODUTOS = "https://render-backend-sl5b.onrender.com/produtos";
+    const API_NOTICIAS = "https://render-backend-sl5b.onrender.com/noticias-uesm";
 
-    // FUNÇÃO PARA CRIAR A NOTÍCIA DE TESTE
-    const cadastrarNoticiaTeste = async () => {
-        const noticia = {
-            titulo: "Lançamento Oficial: Carnaval de Maquete 2026",
-            subtitulo: "UESM prepara os últimos detalhes para os desfiles da próxima temporada.",
-            conteudo: "A União das Escolas de Samba de Maquete (UESM) anunciou hoje o cronograma oficial para 2026. O evento contará com a participação de diversas ligas e promete elevar o nível das apresentações.",
-            imagem: "https://i.pinimg.com/originals/f8/11/c7/f811c7fcba5221b27f8c880a5ba8cd8e.jpg",
-            categoria: "UESM"
-        };
-
+    const carregarDados = async () => {
         try {
-            const res = await fetch('https://render-backend-sl5b.onrender.com/noticias-uesm', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(noticia)
-            });
-
-            if(res.ok) {
-                alert("Notícia cadastrada com sucesso! Verifique a página de Notícias.");
-            } else {
-                alert("Erro ao cadastrar notícia.");
-            }
-        } catch (error) {
-            console.error("Erro de conexão:", error);
+            const [resProd, resNot] = await Promise.all([
+                fetch(API_PRODUTOS),
+                fetch(API_NOTICIAS)
+            ]);
+            setProdutos(await resProd.json());
+            setNoticiasUesm(await resNot.json());
+        } catch (err) {
+            console.error("Erro ao carregar dados:", err);
         }
     };
 
-    const excluirProduto = async (id: string) => {
-        if (window.confirm("Tem certeza que deseja remover este item da UESM?")) {
-            try {
-                const response = await fetch(`${API_URL}/${id}`, {
-                    method: "DELETE",
-                });
+    useEffect(() => { carregarDados(); }, []);
 
-                if (response.ok) {
-                    setStatus({ tipo: "success", mensagem: "Produto excluído com sucesso! 🗑️" });
-                    carregarProdutos(); 
-                } else {
-                    setStatus({ tipo: "danger", mensagem: "Erro ao excluir produto." });
-                }
-            } catch (error) {
-                setStatus({ tipo: "danger", mensagem: "Erro na conexão com o banco." });
-            }
-        }
-    };
-
-    const prepararEdicao = (p: any) => {
-        setIdEditando(p._id);
-        setTitulo(p.titulo);
-        setPreco(p.preco);
-        setParcelas(p.parcelas);
-        setImagem(p.imagem);
-        setLinkAfiliado(p.linkAfiliado);
-        setCategoria(p.categoria);
-        setGarantia(p.garantia);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const limparFormulario = () => {
-        setIdEditando(null);
-        setTitulo("");
-        setPreco("");
-        setImagem("");
-        setLinkAfiliado("");
-        setCategoria("Maquetes");
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    // --- LÓGICA DE PRODUTOS ---
+    const handleSubmitProduto = async (e: React.FormEvent) => {
         e.preventDefault();
-        const produtoDados = { titulo, preco, parcelas, imagem, linkAfiliado, categoria, garantia };
+        const produtoDados = { titulo, preco, imagem, linkAfiliado, categoria };
         const metodo = idEditando ? "PUT" : "POST";
-        const url = idEditando ? `${API_URL}/${idEditando}` : API_URL;
+        const url = idEditando ? `${API_PRODUTOS}/${idEditando}` : API_PRODUTOS;
 
         try {
             const response = await fetch(url, {
@@ -108,114 +54,226 @@ export function AdminMercado() {
             });
 
             if (response.ok) {
-                setStatus({ 
-                    tipo: "success", 
-                    mensagem: idEditando ? "Alterado na UESM com sucesso!" : "Cadastrado na UESM com sucesso!" 
-                });
-                limparFormulario();
-                carregarProdutos();
+                setStatus({ tipo: "success", mensagem: "Produto atualizado no banco! 📦" });
+                limparFormProduto();
+                carregarDados();
             }
         } catch (error) {
-            setStatus({ tipo: "danger", mensagem: "Erro na conexão com o banco." });
+            setStatus({ tipo: "danger", mensagem: "Erro ao salvar produto." });
         }
     };
 
+    const prepararEdicaoProduto = (p: any) => {
+        setIdEditando(p._id);
+        setTitulo(p.titulo);
+        setPreco(p.preco);
+        setImagem(p.imagem);
+        setLinkAfiliado(p.linkAfiliado);
+        setCategoria(p.categoria);
+    };
+
+    const excluirProduto = async (id: string) => {
+        if (window.confirm("Excluir este produto?")) {
+            await fetch(`${API_PRODUTOS}/${id}`, { method: "DELETE" });
+            carregarDados();
+        }
+    };
+
+    const limparFormProduto = () => {
+        setIdEditando(null);
+        setTitulo(""); setPreco(""); setImagem(""); setLinkAfiliado(""); setCategoria("Maquetes");
+    };
+
+    // --- LÓGICA DE NOTÍCIAS ---
+    const handleSubmitNoticia = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const noticiaDados = { 
+            titulo: noticiaTitulo, 
+            subtitulo: noticiaSub, 
+            imagem: noticiaImg, 
+            conteudo: noticiaConteudo, 
+            categoria: "UESM" 
+        };
+        
+        const metodo = idNoticiaEditando ? "PUT" : "POST";
+        const url = idNoticiaEditando ? `${API_NOTICIAS}/${idNoticiaEditando}` : API_NOTICIAS;
+
+        try {
+            const response = await fetch(url, {
+                method: metodo,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(noticiaDados),
+            });
+
+            if (response.ok) {
+                setStatus({ tipo: "success", mensagem: "Notícia UESM atualizada com sucesso! 🏆" });
+                limparFormNoticia();
+                carregarDados();
+            }
+        } catch (error) {
+            setStatus({ tipo: "danger", mensagem: "Erro na conexão com o servidor." });
+        }
+    };
+
+    const prepararEdicaoNoticia = (n: any) => {
+        setIdNoticiaEditando(n._id);
+        setNoticiaTitulo(n.titulo);
+        setNoticiaSub(n.subtitulo);
+        setNoticiaImg(n.imagem);
+        setNoticiaConteudo(n.conteudo);
+    };
+
+    const excluirNoticia = async (id: string) => {
+        if (window.confirm("Tem certeza que deseja excluir esta notícia?")) {
+            await fetch(`${API_NOTICIAS}/${id}`, { method: "DELETE" });
+            carregarDados();
+        }
+    };
+
+    const limparFormNoticia = () => {
+        setIdNoticiaEditando(null);
+        setNoticiaTitulo(""); setNoticiaSub(""); setNoticiaImg(""); setNoticiaConteudo("");
+    };
+
     return (
-        <Container id="AdminMercado" className="py-5">
-            {/* BOTÃO DE TESTE DE NOTÍCIA - COLOCADO NO TOPO PARA FÁCIL ACESSO */}
-            <div className="text-end mb-3">
-                <Button variant="primary" onClick={cadastrarNoticiaTeste} size="sm">
-                    🚀 Gerar Notícia de Teste (MongoDB)
-                </Button>
-            </div>
+        <Container className="py-5">
+            <h2 className="text-center mb-4 fw-bold" style={{ color: '#006400' }}>
+                PAINEL ADMINISTRATIVO UESM
+            </h2>
+            
+            {status.mensagem && <Alert variant={status.tipo} dismissible onClose={() => setStatus({tipo:'', mensagem:''})}>
+                {status.mensagem}
+            </Alert>}
 
-            <Card className="shadow p-4 mb-5 border-0">
-                <h2 className="text-center mb-4 fw-bold" style={{color: '#006400'}}>
-                    PAINEL ADMINISTRATIVO UESM
-                </h2>
-                
-                {status.mensagem && <Alert variant={status.tipo}>{status.mensagem}</Alert>}
+            <Tabs defaultActiveKey="noticias" className="mb-4 custom-tabs">
+                {/* ABA DE NOTÍCIAS */}
+                <Tab eventKey="noticias" title="📰 Gerenciar Notícias">
+                    <Card className="shadow-sm p-4 mb-4 border-0 text-dark">
+                        <h4 className="mb-3">{idNoticiaEditando ? "🔄 Editar Notícia" : "🆕 Nova Notícia"}</h4>
+                        <Form onSubmit={handleSubmitNoticia}>
+                            <Form.Group className="mb-2">
+                                <Form.Label>Título</Form.Label>
+                                <Form.Control value={noticiaTitulo} onChange={e => setNoticiaTitulo(e.target.value)} required />
+                            </Form.Group>
+                            <Form.Group className="mb-2">
+                                <Form.Label>Subtítulo</Form.Label>
+                                <Form.Control value={noticiaSub} onChange={e => setNoticiaSub(e.target.value)} required />
+                            </Form.Group>
+                            <Form.Group className="mb-2">
+                                <Form.Label>URL da Imagem</Form.Label>
+                                <Form.Control value={noticiaImg} onChange={e => setNoticiaImg(e.target.value)} required />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Conteúdo da Notícia</Form.Label>
+                                <Form.Control as="textarea" rows={4} value={noticiaConteudo} onChange={e => setNoticiaConteudo(e.target.value)} required />
+                            </Form.Group>
+                            <Button variant="success" type="submit" className="w-100 fw-bold">
+                                {idNoticiaEditando ? "SALVAR ALTERAÇÕES" : "PUBLICAR NOTÍCIA"}
+                            </Button>
+                            {idNoticiaEditando && (
+                                <Button variant="link" onClick={limparFormNoticia} className="w-100 mt-2 text-muted">
+                                    Cancelar Edição
+                                </Button>
+                            )}
+                        </Form>
+                    </Card>
 
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">Nome do Item</Form.Label>
-                        <Form.Control value={titulo} onChange={e => setTitulo(e.target.value)} required placeholder="Ex: Franjas de Seda..." />
-                    </Form.Group>
+                    <Card className="shadow-sm p-4 border-0 text-dark">
+                        <h5 className="mb-3">Lista de Notícias</h5>
+                        <Table hover responsive>
+                            <thead className="table-dark">
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {noticiasUesm.map(n => (
+                                    <tr key={n._id}>
+                                        <td className="small">{n.titulo}</td>
+                                        <td>
+                                            <div className="d-flex gap-2">
+                                                <Button variant="outline-primary" size="sm" onClick={() => prepararEdicaoNoticia(n)}>Editar</Button>
+                                                <Button variant="outline-danger" size="sm" onClick={() => excluirNoticia(n._id)}>Excluir</Button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </Card>
+                </Tab>
 
-                    <div className="d-flex gap-3 align-items-end">
-                        <Form.Group className="mb-3 w-50">
-                            <Form.Label className="fw-bold">Preço (R$)</Form.Label>
-                            <Form.Control value={preco} onChange={e => setPreco(e.target.value)} required />
-                        </Form.Group>
+                {/* ABA DE PRODUTOS */}
+                <Tab eventKey="produtos" title="📦 Gerenciar Produtos">
+                    <Card className="shadow-sm p-4 mb-4 border-0 text-dark">
+                        <h4 className="mb-3">{idEditando ? "🔄 Editar Produto" : "🆕 Novo Produto"}</h4>
+                        <Form onSubmit={handleSubmitProduto}>
+                            <Form.Group className="mb-2">
+                                <Form.Label>Nome do Item</Form.Label>
+                                <Form.Control value={titulo} onChange={e => setTitulo(e.target.value)} required />
+                            </Form.Group>
+                            <div className="d-flex gap-2">
+                                <Form.Group className="mb-2 w-50">
+                                    <Form.Label>Preço (R$)</Form.Label>
+                                    <Form.Control value={preco} onChange={e => setPreco(e.target.value)} required />
+                                </Form.Group>
+                                <Form.Group className="mb-2 w-50">
+                                    <Form.Label>Categoria</Form.Label>
+                                    <Form.Select value={categoria} onChange={e => setCategoria(e.target.value)}>
+                                        <option value="Maquetes">Maquetes</option>
+                                        <option value="Missangas">Missangas</option>
+                                        <option value="Casa">Casa</option>
+                                    </Form.Select>
+                                </Form.Group>
+                            </div>
+                            <Form.Group className="mb-2">
+                                <Form.Label>URL da Imagem</Form.Label>
+                                <Form.Control value={imagem} onChange={e => setImagem(e.target.value)} required />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Link Mercado Livre (Afiliado)</Form.Label>
+                                <Form.Control value={linkAfiliado} onChange={e => setLinkAfiliado(e.target.value)} required />
+                            </Form.Group>
+                            <Button variant="success" type="submit" className="w-100 fw-bold">
+                                {idEditando ? "SALVAR ALTERAÇÕES" : "CADASTRAR NO BANCO"}
+                            </Button>
+                            {idEditando && (
+                                <Button variant="link" onClick={limparFormProduto} className="w-100 mt-2 text-muted">
+                                    Cancelar Edição
+                                </Button>
+                            )}
+                        </Form>
+                    </Card>
 
-                        <Form.Group className="mb-3 w-50">
-                            <Form.Label className="fw-bold">Categoria</Form.Label>
-                            <Form.Control 
-                                list="categorias-existentes"
-                                value={categoria} 
-                                onChange={e => setCategoria(e.target.value)} 
-                                placeholder="Selecione ou digite nova"
-                                required
-                            />
-                            <datalist id="categorias-existentes">
-                                <option value="Maquetes" />
-                                <option value="Missangas" />
-                            </datalist>
-                        </Form.Group>
-                    </div>
-
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">URL da Imagem</Form.Label>
-                        <Form.Control value={imagem} onChange={e => setImagem(e.target.value)} required />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">Link Mercado Livre (Afiliado)</Form.Label>
-                        <Form.Control value={linkAfiliado} onChange={e => setLinkAfiliado(e.target.value)} required />
-                    </Form.Group>
-
-                    <Button variant="success" type="submit" className="w-100 fw-bold py-2">
-                        {idEditando ? "CONFIRMAR ALTERAÇÃO NA UESM" : "CADASTRAR NO BANCO"}
-                    </Button>
-                    
-                    {idEditando && (
-                        <Button variant="link" onClick={limparFormulario} className="w-100 mt-2 text-muted">
-                            Cancelar e voltar para novo cadastro
-                        </Button>
-                    )}
-                </Form>
-            </Card>
-
-            <Card className="shadow p-4 border-0">
-                <h3 className="mb-4 text-center">Gerenciar Produtos Atuais</h3>
-                <Table hover responsive>
-                    <thead className="table-dark">
-                        <tr>
-                            <th>Título</th>
-                            <th>Categoria</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {produtos.map(p => (
-                            <tr key={p._id}>
-                                <td className="small">{p.titulo}</td>
-                                <td><span className="badge bg-primary">{p.categoria}</span></td>
-                                <td style={{ minWidth: "180px" }}>
-                                    <div className="d-flex gap-2">
-                                        <Button variant="outline-primary" size="sm" onClick={() => prepararEdicao(p)}>
-                                            Editar 🔄
-                                        </Button>
-                                        <Button variant="outline-danger" size="sm" onClick={() => excluirProduto(p._id)}>
-                                            Excluir 🗑️
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            </Card>
+                    <Card className="shadow-sm p-4 border-0 text-dark">
+                        <h5 className="mb-3">Gerenciar Produtos Atuais</h5>
+                        <Table hover responsive>
+                            <thead className="table-dark">
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {produtos.map(p => (
+                                    <tr key={p._id}>
+                                        <td className="small">{p.titulo}</td>
+                                        <td><span className="badge bg-primary">{p.categoria}</span></td>
+                                        <td>
+                                            <div className="d-flex gap-2">
+                                                <Button variant="outline-primary" size="sm" onClick={() => prepararEdicaoProduto(p)}>Editar</Button>
+                                                <Button variant="outline-danger" size="sm" onClick={() => excluirProduto(p._id)}>Excluir</Button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </Card>
+                </Tab>
+            </Tabs>
         </Container>
     );
 }

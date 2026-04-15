@@ -83,7 +83,9 @@ function App() {
               </div>
             </div>
 
-            <Noticias />
+            {/* A seção de notícias que aparece na Home */}
+            <Noticias /> 
+            
             <Features />
             <Services />
             <About />
@@ -93,7 +95,7 @@ function App() {
           </div>
         } />
 
-        {/* NOVA ROTA: Página exclusiva de Notícias */}
+        {/* PÁGINA EXCLUSIVA DE NOTÍCIAS (Acessada via link) */}
         <Route path="/noticias-uesm" element={
           <div className="py-5 bg-light min-vh-100">
             <Noticias />
@@ -103,12 +105,12 @@ function App() {
           </div>
         } />
 
-        {/* ROTA PRIVADA: Painel Administrativo */}
+        {/* PAINEL ADMINISTRATIVO (Onde você vai gerenciar notícias e produtos) */}
         <Route path="/painel-uesm" element={
-          <div className="py-5 bg-dark min-vh-100">
+          <div className="py-5 bg-light min-vh-100"> {/* Mudei para bg-light para as abas aparecerem melhor */}
             <AdminMercado />
             <div className="text-center mt-3">
-              <a href="/" className="text-white">← Voltar para o Site</a>
+              <a href="/" className="btn btn-link">← Voltar para o Site</a>
             </div>
           </div>
         } />
