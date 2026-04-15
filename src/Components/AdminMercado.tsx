@@ -27,6 +27,33 @@ export function AdminMercado() {
         carregarProdutos();
     }, []);
 
+    // FUNÇÃO PARA CRIAR A NOTÍCIA DE TESTE
+    const cadastrarNoticiaTeste = async () => {
+        const noticia = {
+            titulo: "Lançamento Oficial: Carnaval de Maquete 2026",
+            subtitulo: "UESM prepara os últimos detalhes para os desfiles da próxima temporada.",
+            conteudo: "A União das Escolas de Samba de Maquete (UESM) anunciou hoje o cronograma oficial para 2026. O evento contará com a participação de diversas ligas e promete elevar o nível das apresentações.",
+            imagem: "https://i.pinimg.com/originals/f8/11/c7/f811c7fcba5221b27f8c880a5ba8cd8e.jpg",
+            categoria: "UESM"
+        };
+
+        try {
+            const res = await fetch('https://render-backend-sl5b.onrender.com/noticias-uesm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(noticia)
+            });
+
+            if(res.ok) {
+                alert("Notícia cadastrada com sucesso! Verifique a página de Notícias.");
+            } else {
+                alert("Erro ao cadastrar notícia.");
+            }
+        } catch (error) {
+            console.error("Erro de conexão:", error);
+        }
+    };
+
     const excluirProduto = async (id: string) => {
         if (window.confirm("Tem certeza que deseja remover este item da UESM?")) {
             try {
@@ -55,8 +82,6 @@ export function AdminMercado() {
         setLinkAfiliado(p.linkAfiliado);
         setCategoria(p.categoria);
         setGarantia(p.garantia);
-        
-        // Rola para o topo para facilitar a edição
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -97,6 +122,13 @@ export function AdminMercado() {
 
     return (
         <Container id="AdminMercado" className="py-5">
+            {/* BOTÃO DE TESTE DE NOTÍCIA - COLOCADO NO TOPO PARA FÁCIL ACESSO */}
+            <div className="text-end mb-3">
+                <Button variant="primary" onClick={cadastrarNoticiaTeste} size="sm">
+                    🚀 Gerar Notícia de Teste (MongoDB)
+                </Button>
+            </div>
+
             <Card className="shadow p-4 mb-5 border-0">
                 <h2 className="text-center mb-4 fw-bold" style={{color: '#006400'}}>
                     PAINEL ADMINISTRATIVO UESM
@@ -171,19 +203,10 @@ export function AdminMercado() {
                                 <td><span className="badge bg-primary">{p.categoria}</span></td>
                                 <td style={{ minWidth: "180px" }}>
                                     <div className="d-flex gap-2">
-                                        <Button 
-                                            variant="outline-primary" 
-                                            size="sm" 
-                                            onClick={() => prepararEdicao(p)}
-                                        >
+                                        <Button variant="outline-primary" size="sm" onClick={() => prepararEdicao(p)}>
                                             Editar 🔄
                                         </Button>
-                                        
-                                        <Button 
-                                            variant="outline-danger" 
-                                            size="sm" 
-                                            onClick={() => excluirProduto(p._id)}
-                                        >
+                                        <Button variant="outline-danger" size="sm" onClick={() => excluirProduto(p._id)}>
                                             Excluir 🗑️
                                         </Button>
                                     </div>
