@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 
-export function Noticias() {
+// Adicionei 'limite' para podermos controlar quantas notícias aparecem
+export function Noticias({ limite }: { limite?: number }) {
   const [noticias, setNoticias] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -9,17 +10,19 @@ export function Noticias() {
     fetch('https://api.rss2json.com/v1/api.json?rss_url=https://srzd.com/category/carnaval/sao-paulo/feed/')
       .then(res => res.json())
       .then(data => {
-        setNoticias(data.items);
+        // Se tiver limite, corta o array, se não, mostra todos
+        const lista = limite ? data.items.slice(0, limite) : data.items;
+        setNoticias(lista);
         setLoading(false);
       })
       .catch(err => {
         console.error("Erro ao buscar notícias:", err);
         setLoading(false);
       });
-  }, []);
+  }, [limite]);
 
   return (
-    <Container id="noticias" style={{ marginTop: '100px', marginBottom: '50px' }}>
+    <Container id="noticias" style={{ marginTop: '50px', marginBottom: '50px' }}>
       <div className="text-center mb-5">
         <h2 style={{ fontWeight: 'bold', color: '#333' }}>📰 Notícias do Carnaval</h2>
         <p className="text-muted">Fique por dentro do que acontece no samba paulistano</p>
@@ -33,7 +36,7 @@ export function Noticias() {
       ) : (
         <Row>
           {noticias.map((item, index) => (
-            <Col key={index} md={4} className="mb-4">
+            <Col key={index} md={limite === 3 ? 4 : 3} className="mb-4"> {/* Ajusta largura se for 3 ou mais */}
               <Card className="h-100 shadow-sm border-0" style={{ borderLeft: '5px solid #ffc107' }}>
                 <Card.Body className="d-flex flex-column">
                   <Card.Text className="text-muted small mb-2">
@@ -45,8 +48,7 @@ export function Noticias() {
                   </Card.Title>
 
                   <Card.Text className="text-muted" style={{ fontSize: '0.9rem' }}>
-                    {/* Remove tags HTML que possam vir no resumo da notícia */}
-                    {item.contentSnippet ? item.contentSnippet.substring(0, 100) + '...' : 'Clique para ler os detalhes no portal.'}
+                    {item.description ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 100) + '...' : 'Clique para ler os detalhes.'}
                   </Card.Text>
                   
                   <Button 

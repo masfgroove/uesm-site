@@ -57,7 +57,7 @@ function App() {
       <Navigation />
       
       <Routes>
-        {/* ROTA PÚBLICA: O que os usuários veem */}
+        {/* ROTA PÚBLICA: Home completa */}
         <Route path="/" element={
           <div>
             <Home />
@@ -93,7 +93,17 @@ function App() {
           </div>
         } />
 
-        {/* ROTA PRIVADA: Só você acessa digitando /painel-uesm */}
+        {/* NOVA ROTA: Página exclusiva de Notícias */}
+        <Route path="/noticias-uesm" element={
+          <div className="py-5 bg-light min-vh-100">
+            <Noticias />
+            <div className="text-center mt-5">
+              <a href="/" className="btn btn-outline-primary">← Voltar para o Início</a>
+            </div>
+          </div>
+        } />
+
+        {/* ROTA PRIVADA: Painel Administrativo */}
         <Route path="/painel-uesm" element={
           <div className="py-5 bg-dark min-vh-100">
             <AdminMercado />

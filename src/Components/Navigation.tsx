@@ -21,7 +21,7 @@ export function Navigation() {
         <div>
             <Navbar collapseOnSelect fixed='top' expand='sm' className='navbar-default'>
                 <Container>
-                    <Navbar.Brand style={{ display: 'flex', alignItems: 'center' }}>
+                    <Navbar.Brand href="/" style={{ display: 'flex', alignItems: 'center' }}>
                       <img
                         src="img/logo_uesm.png"
                         alt="Logo UESM"
@@ -33,12 +33,20 @@ export function Navigation() {
                     <Navbar.Collapse id='responsive-navbar-nav' className="justify-content-end">
                         <Nav defaultActiveKey="/" as="ul">
                             <Nav.Item>
-                                <Nav.Link href="#home" className="nav-links" style={linkStyle}>🏠 Home</Nav.Link>
+                                <Nav.Link href="/" className="nav-links" style={linkStyle}>🏠 Home</Nav.Link>
                             </Nav.Item>
                             
-                            {/* ADICIONADO: LINK PARA NOTÍCIAS */}
+                            {/* AJUSTADO: Agora abre a página de notícias em uma nova aba */}
                             <Nav.Item>
-                                <Nav.Link href="#noticias" className="nav-links" style={{...linkStyle, color: '#d35400'}}>📰 Notícias</Nav.Link>
+                                <Nav.Link 
+                                    href="/noticias-uesm" 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="nav-links" 
+                                    style={{...linkStyle, color: '#d35400'}}
+                                >
+                                    📰 Notícias
+                                </Nav.Link>
                             </Nav.Item>
 
                             <Nav.Item>
