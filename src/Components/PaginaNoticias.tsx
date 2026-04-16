@@ -52,6 +52,9 @@ export function PaginaNoticias() {
       <Container className="py-5 text-dark">
         {/* Imagem */}
         <div className="text-center mb-4">
+            <br></br>
+            <br></br>
+            <br></br>
           <img 
             src={noticia.imagem || "https://via.placeholder.com/800x400?text=Sem+Imagem"} 
             className="img-fluid rounded shadow" 
