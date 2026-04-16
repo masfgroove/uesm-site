@@ -15,6 +15,9 @@ import { Services } from './Components/Services';
 import { Noticias } from './Components/Noticias'; 
 import { AdminMercado } from "./Components/AdminMercado";
 
+// IMPORTANDO O SEU NOVO COMPONENTE (com o "s" no final como você criou)
+import { PaginaNoticias } from './Components/PaginaNoticias'; 
+
 function App() {
   const [eventos, setEventos] = useState<any[]>([]);
   const [totalAcessos, setTotalAcessos] = useState<number>(0);
@@ -83,9 +86,7 @@ function App() {
               </div>
             </div>
 
-            {/* A seção de notícias que aparece na Home */}
             <Noticias /> 
-            
             <Features />
             <Services />
             <About />
@@ -95,7 +96,7 @@ function App() {
           </div>
         } />
 
-        {/* PÁGINA EXCLUSIVA DE NOTÍCIAS (Acessada via link) */}
+        {/* LISTA COMPLETA DE NOTÍCIAS */}
         <Route path="/noticias-uesm" element={
           <div className="py-5 bg-light min-vh-100">
             <Noticias />
@@ -105,9 +106,12 @@ function App() {
           </div>
         } />
 
-        {/* PAINEL ADMINISTRATIVO (Onde você vai gerenciar notícias e produtos) */}
+        {/* PÁGINA DA NOTÍCIA INDIVIDUAL (Usando seu componente PaginaNoticias) */}
+        <Route path="/noticia/:id" element={<PaginaNoticias />} />
+
+        {/* PAINEL ADMINISTRATIVO */}
         <Route path="/painel-uesm" element={
-          <div className="py-5 bg-light min-vh-100"> {/* Mudei para bg-light para as abas aparecerem melhor */}
+          <div className="py-5 bg-light min-vh-100">
             <AdminMercado />
             <div className="text-center mt-3">
               <a href="/" className="btn btn-link">← Voltar para o Site</a>

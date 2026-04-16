@@ -23,7 +23,7 @@ export function Navigation() {
                 <Container>
                     <Navbar.Brand href="/" style={{ display: 'flex', alignItems: 'center' }}>
                       <img
-                        src="img/logo_uesm.png"
+                        src="/img/logo_uesm.png"
                         alt="Logo UESM"
                         style={{ height: '45px', width: 'auto' }}
                       />
