@@ -9,11 +9,18 @@ export function Mercado() {
     const produtosPorPagina = 8;
 
     useEffect(() => {
-        // Busca os dados no servidor do Render
-        fetch('https://render-backend-sl5b.onrender.com/produtos')
+        // AJUSTADO: Busca os dados no seu servidor local (porta 3000)
+        fetch('http://localhost:3000/produtos')
             .then(res => res.json())
             .then(dados => setItens(dados))
-            .catch(err => console.error("Erro ao carregar mercado:", err));
+            .catch(err => {
+                console.error("Erro ao carregar mercado local, tentando Render...", err);
+                // Tenta o Render caso o local esteja desligado
+                fetch('https://render-backend-sl5b.onrender.com/produtos')
+                    .then(res => res.json())
+                    .then(dados => setItens(dados))
+                    .catch(e => console.error("Erro total ao carregar mercado:", e));
+            });
     }, []);
 
     // Lógica para calcular quais itens mostrar
@@ -47,7 +54,6 @@ export function Mercado() {
                 <Row className="mt-4">
                     {itens.length > 0 ? (
                         itensExibidos.map((d, i) => (
-                            // lg={3} garante 4 produtos por linha em telas desktop
                             <Col xs={12} sm={6} md={4} lg={3} key={d._id || i} className="mb-4 d-flex align-items-stretch">
                                 <Card className="shadow-sm w-100 border-0">
                                     <Card.Img 
@@ -107,8 +113,7 @@ export function Mercado() {
                                     key={i + 1} 
                                     active={i + 1 === paginaAtual}
                                     onClick={() => mudarPagina(i + 1)}
-                                    // Estilo para combinar com o tema verde/amarelo
-                                    linkStyle={i + 1 === paginaAtual ? {backgroundColor: '#198754', borderColor: '#198754'} : {color: '#198754'}}
+                                    style={{ cursor: 'pointer' }}
                                 >
                                     {i + 1}
                                 </Pagination.Item>

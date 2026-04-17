@@ -21,8 +21,9 @@ export function AdminMercado() {
 
     const [status, setStatus] = useState({ tipo: "", mensagem: "" });
 
-    const API_PRODUTOS = "https://render-backend-sl5b.onrender.com/produtos";
-    const API_NOTICIAS = "https://render-backend-sl5b.onrender.com/noticias-uesm";
+    // --- APIs ---
+    const API_PRODUTOS = "http://localhost:3000/produtos";
+    const API_NOTICIAS = "http://localhost:3000/noticias-uesm";
 
     const carregarDados = async () => {
         try {
@@ -30,8 +31,10 @@ export function AdminMercado() {
                 fetch(API_PRODUTOS),
                 fetch(API_NOTICIAS)
             ]);
-            setProdutos(await resProd.json());
-            setNoticiasUesm(await resNot.json());
+            const dataProd = await resProd.json();
+            const dataNot = await resNot.json();
+            setProdutos(dataProd);
+            setNoticiasUesm(dataNot);
         } catch (err) {
             console.error("Erro ao carregar dados:", err);
         }
@@ -39,7 +42,7 @@ export function AdminMercado() {
 
     useEffect(() => { carregarDados(); }, []);
 
-    // --- LÓGICA DE PRODUTOS ---
+    // --- LÓGICA DE PRODUTOS (IGUALADA ÀS NOTÍCIAS) ---
     const handleSubmitProduto = async (e: React.FormEvent) => {
         e.preventDefault();
         const produtoDados = { titulo, preco, imagem, linkAfiliado, categoria };
@@ -54,15 +57,51 @@ export function AdminMercado() {
             });
 
             if (response.ok) {
-                setStatus({ tipo: "success", mensagem: "Produto atualizado no banco! 📦" });
+                setStatus({ tipo: "success", mensagem: "Produto atualizado com sucesso! 📦" });
                 limparFormProduto();
-                carregarDados();
+                await carregarDados(); // Aguarda carregar para atualizar a lista
             }
         } catch (error) {
-            setStatus({ tipo: "danger", mensagem: "Erro ao salvar produto." });
+            setStatus({ tipo: "danger", mensagem: "Erro na conexão com o servidor." });
         }
     };
 
+  const excluirProduto = async (id: string) => {
+        // Teste 1: Ver se o ID existe ao clicar
+        console.log("Tentando excluir o produto com ID:", id);
+
+        if (!id) {
+            alert("Erro: O ID do produto veio vazio!");
+            return;
+        }
+
+        if (window.confirm("Deseja realmente excluir este produto?")) {
+            try {
+                const urlCompleta = `${API_PRODUTOS}/${id}`;
+                console.log("Chamando URL:", urlCompleta);
+
+                const response = await fetch(urlCompleta, { 
+                    method: "DELETE" 
+                });
+
+                console.log("Status da resposta do Servidor:", response.status);
+
+                if (response.ok) {
+                    setStatus({ tipo: "success", mensagem: "Produto excluído com sucesso! 🗑️" });
+                    console.log("Sucesso! Atualizando lista...");
+                    await carregarDados(); 
+                } else {
+                    const textoErro = await response.text();
+                    console.error("O servidor respondeu com erro:", textoErro);
+                    setStatus({ tipo: "danger", mensagem: "Erro ao excluir produto no servidor." });
+                }
+            } catch (err) {
+                console.error("Erro catastrófico na conexão:", err);
+                setStatus({ tipo: "danger", mensagem: "Erro de conexão ao tentar excluir." });
+            }
+        }
+    };
+    
     const prepararEdicaoProduto = (p: any) => {
         setIdEditando(p._id);
         setTitulo(p.titulo);
@@ -70,13 +109,6 @@ export function AdminMercado() {
         setImagem(p.imagem);
         setLinkAfiliado(p.linkAfiliado);
         setCategoria(p.categoria);
-    };
-
-    const excluirProduto = async (id: string) => {
-        if (window.confirm("Excluir este produto?")) {
-            await fetch(`${API_PRODUTOS}/${id}`, { method: "DELETE" });
-            carregarDados();
-        }
     };
 
     const limparFormProduto = () => {
@@ -87,14 +119,7 @@ export function AdminMercado() {
     // --- LÓGICA DE NOTÍCIAS ---
     const handleSubmitNoticia = async (e: React.FormEvent) => {
         e.preventDefault();
-        const noticiaDados = { 
-            titulo: noticiaTitulo, 
-            subtitulo: noticiaSub, 
-            imagem: noticiaImg, 
-            conteudo: noticiaConteudo, 
-            categoria: "UESM" 
-        };
-        
+        const noticiaDados = { titulo: noticiaTitulo, subtitulo: noticiaSub, imagem: noticiaImg, conteudo: noticiaConteudo, categoria: "UESM" };
         const metodo = idNoticiaEditando ? "PUT" : "POST";
         const url = idNoticiaEditando ? `${API_NOTICIAS}/${idNoticiaEditando}` : API_NOTICIAS;
 
@@ -104,14 +129,27 @@ export function AdminMercado() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(noticiaDados),
             });
-
             if (response.ok) {
                 setStatus({ tipo: "success", mensagem: "Notícia UESM atualizada com sucesso! 🏆" });
                 limparFormNoticia();
-                carregarDados();
+                await carregarDados();
             }
         } catch (error) {
             setStatus({ tipo: "danger", mensagem: "Erro na conexão com o servidor." });
+        }
+    };
+
+    const excluirNoticia = async (id: string) => {
+        if (window.confirm("Tem certeza que deseja excluir esta notícia?")) {
+            try {
+                const response = await fetch(`${API_NOTICIAS}/${id}`, { method: "DELETE" });
+                if (response.ok) {
+                    setStatus({ tipo: "success", mensagem: "Notícia removida!" });
+                    await carregarDados();
+                }
+            } catch (err) {
+                console.error(err);
+            }
         }
     };
 
@@ -121,13 +159,6 @@ export function AdminMercado() {
         setNoticiaSub(n.subtitulo);
         setNoticiaImg(n.imagem);
         setNoticiaConteudo(n.conteudo);
-    };
-
-    const excluirNoticia = async (id: string) => {
-        if (window.confirm("Tem certeza que deseja excluir esta notícia?")) {
-            await fetch(`${API_NOTICIAS}/${id}`, { method: "DELETE" });
-            carregarDados();
-        }
     };
 
     const limparFormNoticia = () => {
@@ -146,7 +177,7 @@ export function AdminMercado() {
             </Alert>}
 
             <Tabs defaultActiveKey="noticias" className="mb-4 custom-tabs">
-                {/* ABA DE NOTÍCIAS */}
+                {/* ABA NOTÍCIAS */}
                 <Tab eventKey="noticias" title="📰 Gerenciar Notícias">
                     <Card className="shadow-sm p-4 mb-4 border-0 text-dark">
                         <h4 className="mb-3">{idNoticiaEditando ? "🔄 Editar Notícia" : "🆕 Nova Notícia"}</h4>
@@ -170,41 +201,25 @@ export function AdminMercado() {
                             <Button variant="success" type="submit" className="w-100 fw-bold">
                                 {idNoticiaEditando ? "SALVAR ALTERAÇÕES" : "PUBLICAR NOTÍCIA"}
                             </Button>
-                            {idNoticiaEditando && (
-                                <Button variant="link" onClick={limparFormNoticia} className="w-100 mt-2 text-muted">
-                                    Cancelar Edição
-                                </Button>
-                            )}
                         </Form>
                     </Card>
-
-                    <Card className="shadow-sm p-4 border-0 text-dark">
-                        <h5 className="mb-3">Lista de Notícias</h5>
-                        <Table hover responsive>
-                            <thead className="table-dark">
-                                <tr>
-                                    <th>Título</th>
-                                    <th>Ações</th>
+                    <Table hover responsive className="text-dark">
+                        <thead className="table-dark"><tr><th>Título</th><th>Ações</th></tr></thead>
+                        <tbody>
+                            {noticiasUesm.map(n => (
+                                <tr key={n._id}>
+                                    <td className="small">{n.titulo}</td>
+                                    <td>
+                                        <Button variant="outline-primary" size="sm" onClick={() => prepararEdicaoNoticia(n)} className="me-2">Editar</Button>
+                                        <Button variant="outline-danger" size="sm" onClick={() => excluirNoticia(n._id)}>Excluir</Button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {noticiasUesm.map(n => (
-                                    <tr key={n._id}>
-                                        <td className="small">{n.titulo}</td>
-                                        <td>
-                                            <div className="d-flex gap-2">
-                                                <Button variant="outline-primary" size="sm" onClick={() => prepararEdicaoNoticia(n)}>Editar</Button>
-                                                <Button variant="outline-danger" size="sm" onClick={() => excluirNoticia(n._id)}>Excluir</Button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    </Card>
+                            ))}
+                        </tbody>
+                    </Table>
                 </Tab>
 
-                {/* ABA DE PRODUTOS */}
+                {/* ABA PRODUTOS */}
                 <Tab eventKey="produtos" title="📦 Gerenciar Produtos">
                     <Card className="shadow-sm p-4 mb-4 border-0 text-dark">
                         <h4 className="mb-3">{idEditando ? "🔄 Editar Produto" : "🆕 Novo Produto"}</h4>
@@ -238,40 +253,23 @@ export function AdminMercado() {
                             <Button variant="success" type="submit" className="w-100 fw-bold">
                                 {idEditando ? "SALVAR ALTERAÇÕES" : "CADASTRAR NO BANCO"}
                             </Button>
-                            {idEditando && (
-                                <Button variant="link" onClick={limparFormProduto} className="w-100 mt-2 text-muted">
-                                    Cancelar Edição
-                                </Button>
-                            )}
                         </Form>
                     </Card>
-
-                    <Card className="shadow-sm p-4 border-0 text-dark">
-                        <h5 className="mb-3">Gerenciar Produtos Atuais</h5>
-                        <Table hover responsive>
-                            <thead className="table-dark">
-                                <tr>
-                                    <th>Título</th>
-                                    <th>Categoria</th>
-                                    <th>Ações</th>
+                    <Table hover responsive className="text-dark">
+                        <thead className="table-dark"><tr><th>Título</th><th>Categoria</th><th>Ações</th></tr></thead>
+                        <tbody>
+                            {produtos.map(p => (
+                                <tr key={p._id}>
+                                    <td className="small">{p.titulo}</td>
+                                    <td><span className="badge bg-primary">{p.categoria}</span></td>
+                                    <td>
+                                        <Button variant="outline-primary" size="sm" onClick={() => prepararEdicaoProduto(p)} className="me-2">Editar</Button>
+                                        <Button variant="outline-danger" size="sm" onClick={() => excluirProduto(p._id)}>Excluir</Button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {produtos.map(p => (
-                                    <tr key={p._id}>
-                                        <td className="small">{p.titulo}</td>
-                                        <td><span className="badge bg-primary">{p.categoria}</span></td>
-                                        <td>
-                                            <div className="d-flex gap-2">
-                                                <Button variant="outline-primary" size="sm" onClick={() => prepararEdicaoProduto(p)}>Editar</Button>
-                                                <Button variant="outline-danger" size="sm" onClick={() => excluirProduto(p._id)}>Excluir</Button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    </Card>
+                            ))}
+                        </tbody>
+                    </Table>
                 </Tab>
             </Tabs>
         </Container>
